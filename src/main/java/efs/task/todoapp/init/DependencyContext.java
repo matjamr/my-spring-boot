@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class DependencyContext {
 
-    public static final Map<String, Bean> BEAN_MAP = new HashMap<>();
+    public static final Map<Class<?>, Bean> BEAN_MAP = new HashMap<>();
     public static final Map<MappingRecord, Method> MAPPING_MAP = new HashMap<>();
 
 }
