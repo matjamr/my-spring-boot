@@ -3,6 +3,7 @@ package efs.task.todoapp.repository;
 import java.util.List;
 import java.util.function.Predicate;
 
+//@Component
 public class UserRepository implements Repository<String, UserEntity> {
     @Override
     public String save(UserEntity userEntity) {
