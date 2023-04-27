@@ -2,6 +2,7 @@ package efs.task.todoapp.web;
 
 import efs.task.todoapp.annotations.Component;
 import efs.task.todoapp.annotations.GetMapping;
+import efs.task.todoapp.annotations.PostMapping;
 import efs.task.todoapp.annotations.RestController;
 
 @Component
@@ -14,7 +15,7 @@ public class DataController {
     }
 
 
-    @GetMapping(path = "/it-works!")
+    @PostMapping(path = "/it-works!")
     public void dziala() {
         System.out.println("it works LOL");
     }

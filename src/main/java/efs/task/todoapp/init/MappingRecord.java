@@ -1,4 +1,6 @@
 package efs.task.todoapp.init;
 
-public record MappingRecord() {
+import efs.task.todoapp.commons.http.HTTP_METHOD;
+
+public record MappingRecord(String path, HTTP_METHOD method) {
 }

@@ -19,7 +19,7 @@ public class RestControllerExecutor implements Executor {
             PostMapping.class
     );
 
-    private static final Map<Class<? extends Annotation>, Executor> processingMap = Map.of(
+    private static final Map<Class<? extends Annotation>, MappingExecutor> processingMap = Map.of(
             GetMapping.class, new GetMappingExecutor(),
             PostMapping.class, new PostMappingExecutor()
     );
@@ -30,12 +30,14 @@ public class RestControllerExecutor implements Executor {
         BEAN_MAP.values().stream()
                 .filter(bean -> bean.getClass_().isAnnotationPresent(RestController.class))
                 .forEach(bean -> Arrays.stream(bean.getClass_().getMethods())
-                            .filter(this::isOk)
-                            .forEach(method -> {
-                                processingMap.get(Arrays.stream(method.getAnnotations())
-                                        .findFirst().get().getClass())
-                                        .execute();
-                            })
+                        .filter(this::isOk)
+                        .forEach(method -> {
+                            MappingExecutor mappingExecutor = processingMap.get(Arrays.stream(method.getDeclaredAnnotations())
+                                            .map(Annotation::annotationType)
+                                            .findFirst().get());
+
+                            mappingExecutor.execute(method);
+                        })
                 );
     }
 
