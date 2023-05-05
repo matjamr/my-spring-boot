@@ -1,10 +1,8 @@
 package efs.task.todoapp;
 
-import efs.task.todoapp.util.ToDoServerExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,8 +12,8 @@ import java.net.http.HttpRequest;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(ToDoServerExtension.class)
-class ExampleEndpointTest extends BaseTest {
+public class UserEndpointTest extends BaseTest{
+
     private HttpClient httpClient;
 
     @BeforeEach
@@ -25,17 +23,17 @@ class ExampleEndpointTest extends BaseTest {
 
     @Test
     @Timeout(1)
-    void shouldReturnNotFoundStatusForUnhandledPaths() throws IOException, InterruptedException {
+    void validCreateUserRQ_shouldSuccess() throws IOException, InterruptedException {
         //given
         var httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(TODO_APP_PATH + "non/exisiting/endpoint"))
-                .GET()
+                .uri(URI.create(USER_APP_PATH))
+                .POST(null)
                 .build();
 
         //when
         var httpResponse = httpClient.send(httpRequest, ofString());
 
         //then
-        assertThat(httpResponse.statusCode()).as("Response status code").isEqualTo(NOT_FOUND);
+        assertThat(httpResponse.statusCode()).as("Response status code").isEqualTo(SUCCESS);
     }
 }

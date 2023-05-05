@@ -1,4 +1,4 @@
-package efs.task.todoapp.annotations;
+package efs.task.todoapp.init.annotationExecutors.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Component {
+public @interface RestController {
 }

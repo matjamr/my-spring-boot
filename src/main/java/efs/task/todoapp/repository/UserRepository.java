@@ -1,9 +1,12 @@
 package efs.task.todoapp.repository;
 
+import efs.task.todoapp.init.annotationExecutors.annotations.Component;
+
 import java.util.List;
 import java.util.function.Predicate;
 
-//@Component
+@Component
+@efs.task.todoapp.init.annotationExecutors.annotations.Repository
 public class UserRepository implements Repository<String, UserEntity> {
     @Override
     public String save(UserEntity userEntity) {

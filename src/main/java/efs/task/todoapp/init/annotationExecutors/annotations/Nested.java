@@ -1,4 +1,4 @@
-package efs.task.todoapp.annotations;
+package efs.task.todoapp.init.annotationExecutors.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

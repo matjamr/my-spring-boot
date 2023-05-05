@@ -1,7 +1,7 @@
-package efs.task.todoapp.init.annotationExecutors;
+package efs.task.todoapp.init.mappings;
 
-import efs.task.todoapp.annotations.PostMapping;
-import efs.task.todoapp.commons.http.HTTP_METHOD;
+import efs.task.todoapp.init.annotationExecutors.annotations.PostMapping;
+import efs.task.todoapp.init.commons.http.HTTP_METHOD;
 import efs.task.todoapp.init.DependencyContext;
 import efs.task.todoapp.init.MappingRecord;
 

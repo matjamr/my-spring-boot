@@ -1,6 +1,6 @@
 package efs.task.todoapp.repository;
 
-import efs.task.todoapp.annotations.Component;
+import efs.task.todoapp.init.annotationExecutors.annotations.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @Component
-@efs.task.todoapp.annotations.Repository
+@efs.task.todoapp.init.annotationExecutors.annotations.Repository
 public class TaskRepository implements Repository<UUID, TaskEntity> {
 
     private final Map<UUID, TaskEntity> map = new HashMap<>();

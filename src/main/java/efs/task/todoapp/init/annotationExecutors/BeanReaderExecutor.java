@@ -1,9 +1,9 @@
 package efs.task.todoapp.init.annotationExecutors;
 
-import efs.task.todoapp.annotations.Component;
-import efs.task.todoapp.annotations.Repository;
-import efs.task.todoapp.annotations.RestController;
-import efs.task.todoapp.annotations.Service;
+import efs.task.todoapp.init.annotationExecutors.annotations.Component;
+import efs.task.todoapp.init.annotationExecutors.annotations.Repository;
+import efs.task.todoapp.init.annotationExecutors.annotations.RestController;
+import efs.task.todoapp.init.annotationExecutors.annotations.Service;
 import efs.task.todoapp.init.Bean;
 import efs.task.todoapp.init.ClassReader;
 
