@@ -1,4 +1,4 @@
-package efs.task.todoapp.init.mappings;
+package efs.task.todoapp.init.annotationExecutors.mappingExecutors;
 
 import java.lang.reflect.Method;
 

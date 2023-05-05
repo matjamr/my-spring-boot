@@ -11,18 +11,29 @@ import java.util.List;
 @RestController
 public class DataController {
 
-    @GetMapping(path = "/test")
-    public String ananabb() {
+    @GetMapping(path = "/todo/task")
+    public String getTasks() {
         return "121231231!@#!@#!@#!";
     }
 
-    @GetMapping(path = "/test2")
+    @GetMapping(path = "/todo/task/{id}")
+    public String getTaskById() {
+        return "121231231!@#!@#!@#!";
+    }
+
+    @PutMapping(path = "/todo/task/{id}")
+    public String updateTaskById() {
+        return "121231231!@#!@#!@#!";
+    }
+
+    @DeleteMapping(path = "/todo/task/{id}")
+    public String deleteTaskById() {
+        return "121231231!@#!@#!@#!";
+    }
+
+    @PostMapping(path = "/todo/task")
     public List<String> test2Method() {
         return List.of("121231231!@#!@#!@#!", "Bosze to dziala XD");
     }
 
-    @PostMapping(path = "/it-works!")
-    public void dziala() {
-        System.out.println("it works LOL");
-    }
 }

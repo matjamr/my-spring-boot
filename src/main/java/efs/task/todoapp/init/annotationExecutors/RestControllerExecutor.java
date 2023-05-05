@@ -3,9 +3,9 @@ package efs.task.todoapp.init.annotationExecutors;
 import efs.task.todoapp.init.annotationExecutors.annotations.GetMapping;
 import efs.task.todoapp.init.annotationExecutors.annotations.PostMapping;
 import efs.task.todoapp.init.annotationExecutors.annotations.RestController;
-import efs.task.todoapp.init.mappings.GetMappingExecutor;
-import efs.task.todoapp.init.mappings.MappingExecutor;
-import efs.task.todoapp.init.mappings.PostMappingExecutor;
+import efs.task.todoapp.init.annotationExecutors.mappingExecutors.GetMappingExecutor;
+import efs.task.todoapp.init.annotationExecutors.mappingExecutors.MappingExecutor;
+import efs.task.todoapp.init.annotationExecutors.mappingExecutors.PostMappingExecutor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
