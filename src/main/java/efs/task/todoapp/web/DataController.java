@@ -1,9 +1,6 @@
 package efs.task.todoapp.web;
 
-import efs.task.todoapp.init.annotationExecutors.annotations.Component;
-import efs.task.todoapp.init.annotationExecutors.annotations.GetMapping;
-import efs.task.todoapp.init.annotationExecutors.annotations.PostMapping;
-import efs.task.todoapp.init.annotationExecutors.annotations.RestController;
+import efs.task.todoapp.init.annotationExecutors.annotations.*;
 
 import java.util.List;
 
@@ -18,17 +15,17 @@ public class DataController {
 
     @GetMapping(path = "/todo/task/{id}")
     public String getTaskById() {
-        return "121231231!@#!@#!@#!";
+        return "121231231!@#!@#!@#! GETTT";
     }
 
     @PutMapping(path = "/todo/task/{id}")
     public String updateTaskById() {
-        return "121231231!@#!@#!@#!";
+        return "121231231!@#!@#!@#! UDPATE";
     }
 
     @DeleteMapping(path = "/todo/task/{id}")
     public String deleteTaskById() {
-        return "121231231!@#!@#!@#!";
+        return "121231231!@#!@#!@#! DELETE";
     }
 
     @PostMapping(path = "/todo/task")

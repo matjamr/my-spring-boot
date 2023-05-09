@@ -5,9 +5,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import efs.task.todoapp.init.MappingRecord;
 import efs.task.todoapp.init.annotationExecutors.annotations.RequiredBody;
+import efs.task.todoapp.init.annotationExecutors.annotations.Response;
+import efs.task.todoapp.init.commons.error.HttpStatusError;
+import efs.task.todoapp.init.commons.error.InternalServerError;
+import efs.task.todoapp.model.pojos.UserDto;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -21,43 +26,66 @@ public class MyHttpHandler implements HttpHandler {
 
     private static final Gson gson = new Gson();
 
+    public static void main(String[] args) {
+        UserDto userDto = new UserDto(null, "aa");
+        System.out.println(gson.toJson(userDto));
+    }
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        var a = MAPPING_MAP.get(new MappingRecord(
+        var methodFromMapping = MAPPING_MAP.get(new MappingRecord(
                 httpExchange.getRequestURI().getPath(),
-                HTTP_METHOD.valueOf(httpExchange.getRequestMethod())
+                HttpMethod.valueOf(httpExchange.getRequestMethod())
         ));
 
         try {
-            if (isNull(a)) {
-                throw new Exception("INVALID USER LOGGED IN");
+            if (isNull(methodFromMapping)) {
+                throw new Exception("No mapping found!");
             }
 
-            Optional<Parameter> parsedReq = Arrays.stream(a.getParameters())
+            final Optional<Parameter> requiredBodyRQ = Arrays.stream(methodFromMapping.getParameters())
                     .filter(param -> param.isAnnotationPresent(RequiredBody.class))
                     .findFirst();
 
-            Object ret;
+            final Object entityToBeReturned;
 
-            if(parsedReq.isEmpty()) {
-                ret = a.invoke(BEAN_MAP.get(a.getDeclaringClass()).getInstance());
+            if(requiredBodyRQ.isEmpty()) {
+                entityToBeReturned = methodFromMapping.invoke(BEAN_MAP.get(methodFromMapping.getDeclaringClass()).getInstance());
             } else {
-                var paramClassType = parsedReq.get().getParameterizedType();
-                var newaAA = Class.forName(paramClassType.getTypeName());
-                var ac = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                var paramClassType = requiredBodyRQ.get().getParameterizedType();
+                var dynamicType = Class.forName(paramClassType.getTypeName());
+                var requestBodyContent = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
 
-                ret = a.invoke(BEAN_MAP.get(a.getDeclaringClass()).getInstance(),
-                        gson.fromJson(ac, newaAA));
+                var test = gson.fromJson(requestBodyContent, dynamicType);
+
+                entityToBeReturned = methodFromMapping.invoke(BEAN_MAP.get(methodFromMapping.getDeclaringClass()).getInstance(),
+                        test);
             }
 
-            var content = a.invoke(BEAN_MAP.get(a.getDeclaringClass()).getInstance(), ret);
-            handleResponse(httpExchange, gson.toJson(content), 200);
-        } catch (Exception e) {
-            handleResponse(httpExchange, e.getMessage(), 400);
+            // Here is thing to get success response successHttpStatus code
+            HttpStatus successHttpStatus = HttpStatus.OK;
+
+            if(methodFromMapping.isAnnotationPresent(Response.class)) {
+                successHttpStatus = methodFromMapping.getDeclaredAnnotation(Response.class).status();
+            }
+
+            handleResponse(httpExchange, gson.toJson(entityToBeReturned), successHttpStatus.getStatusCode());
+
+        } catch (HttpStatusError httpStatusError) {
+            handleResponse(httpExchange, httpStatusError.getMessage(), httpStatusError.getHttpStatus().getStatusCode());
+        }
+        catch (Exception e) {
+            if(e instanceof InvocationTargetException eb) {
+                if(eb.getTargetException() instanceof HttpStatusError) {
+                    handleResponse(httpExchange, "asdasda", HttpStatus.BAD_REQUEST.getStatusCode());
+                }
+            } else {
+                handleResponse(httpExchange, e.getMessage(), HttpStatus.INTERNAL_ERROR.getStatusCode());
+            }
         }
     }
 
-    private void handleResponse(HttpExchange httpExchange, Object content, int status)  throws  IOException {
+    private void handleResponse(HttpExchange httpExchange, Object content, int status) throws IOException {
 
         OutputStream outputStream = httpExchange.getResponseBody();
 

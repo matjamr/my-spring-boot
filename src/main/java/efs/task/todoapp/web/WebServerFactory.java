@@ -18,6 +18,7 @@ public class WebServerFactory {
         HandicappedDependencyInjectionReader.run();
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);
 
+        System.out.println("Thread pool: 10");
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
         server.createContext("/", new MyHttpHandler());

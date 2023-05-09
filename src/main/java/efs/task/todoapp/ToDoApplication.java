@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class ToDoApplication {
     private static final Logger LOGGER = Logger.getLogger(ToDoApplication.class.getName());
 
-    public static void main(String[] args) throws ClassNotFoundException, IOException {
+    public static void main(String[] args) throws IOException {
         var application = new ToDoApplication();
         var server = application.createServer();
         server.start();

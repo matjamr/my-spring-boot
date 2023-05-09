@@ -36,4 +36,20 @@ public class UserEndpointTest extends BaseTest{
         //then
         assertThat(httpResponse.statusCode()).as("Response status code").isEqualTo(SUCCESS);
     }
+
+    @Test
+    @Timeout(1)
+    void validCreateUseaarRQ_shouldSuccess() throws IOException, InterruptedException {
+        //given
+        var httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(USER_APP_PATH))
+                .POST(null)
+                .build();
+
+        //when
+        var httpResponse = httpClient.send(httpRequest, ofString());
+
+        //then
+        assertThat(httpResponse.statusCode()).as("Response status code").isEqualTo(SUCCESS);
+    }
 }
