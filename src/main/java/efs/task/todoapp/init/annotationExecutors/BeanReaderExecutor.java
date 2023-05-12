@@ -21,13 +21,13 @@ public class BeanReaderExecutor implements Executor {
     private static final List<Class<? extends Annotation>> supportedAnnotations = List.of(
             Service.class,
             RestController.class,
-            Repository.class
+            Repository.class,
+            Component.class
     );
 
     private static final String BASE_PACKAGE = "efs.task.todoapp";
 
 
-    // TODO refactor
     @Override
     public void execute() {
         List<Class<?>> classesToProcess = ClassReader.findAnnotatedClasses(BASE_PACKAGE, Component.class);
@@ -62,7 +62,6 @@ public class BeanReaderExecutor implements Executor {
                         classesToRemove.add(class_);
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                              NoSuchMethodException e) {
-                        // TODO adjust custom exception to be fail fast
                         throw new RuntimeException(e);
                     }
                 } else {
@@ -88,7 +87,6 @@ public class BeanReaderExecutor implements Executor {
 
                             classesToRemove.add(class_);
                         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                            // TODO adjust custom exception to be fail fast
                             throw new RuntimeException(e);
                         }
                     }
@@ -102,7 +100,7 @@ public class BeanReaderExecutor implements Executor {
     private static void assertValidAnnotations(Class<?> class_) {
         Arrays.stream(class_.getAnnotations())
                 .forEach(annotation -> {
-                    assert supportedAnnotations.contains(annotation.getClass());
+//                    assert supportedAnnotations.contains(annotation.getClass());
                 });
     }
 }

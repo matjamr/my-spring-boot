@@ -1,14 +1,19 @@
 package efs.task.todoapp.web;
 
 import efs.task.todoapp.init.annotationExecutors.annotations.*;
-
-import java.util.List;
+import efs.task.todoapp.model.pojos.DataDto;
+import efs.task.todoapp.model.pojos.UUIDResponse;
+import efs.task.todoapp.service.DataService;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RestController
+@RequiredArgsConstructor
 public class DataController {
 
-    @GetMapping(path = "/todo/task")
+    private final DataService dataService;
+
+    @GetMapping(path = "/todo/task", secured = true)
     public String getTasks() {
         return "121231231!@#!@#!@#!";
     }
@@ -28,9 +33,9 @@ public class DataController {
         return "121231231!@#!@#!@#! DELETE";
     }
 
-    @PostMapping(path = "/todo/task")
-    public List<String> test2Method() {
-        return List.of("121231231!@#!@#!@#!", "Bosze to dziala XD");
+    @PostMapping(path = "/task")
+    public UUIDResponse test2Method(@RequiredBody DataDto dataDto) {
+        return dataService.save(dataDto);
     }
 
 }

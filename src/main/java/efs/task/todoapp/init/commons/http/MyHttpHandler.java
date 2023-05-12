@@ -7,7 +7,6 @@ import efs.task.todoapp.init.MappingRecord;
 import efs.task.todoapp.init.annotationExecutors.annotations.RequiredBody;
 import efs.task.todoapp.init.annotationExecutors.annotations.Response;
 import efs.task.todoapp.init.commons.error.HttpStatusError;
-import efs.task.todoapp.init.commons.error.InternalServerError;
 import efs.task.todoapp.model.pojos.UserDto;
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import static efs.task.todoapp.init.DependencyContext.BEAN_MAP;
@@ -76,8 +76,8 @@ public class MyHttpHandler implements HttpHandler {
         }
         catch (Exception e) {
             if(e instanceof InvocationTargetException eb) {
-                if(eb.getTargetException() instanceof HttpStatusError) {
-                    handleResponse(httpExchange, "asdasda", HttpStatus.BAD_REQUEST.getStatusCode());
+                if(eb.getTargetException() instanceof HttpStatusError httpErr) {
+                    handleResponse(httpExchange,  "", httpErr.getHttpStatus().getStatusCode());
                 }
             } else {
                 handleResponse(httpExchange, e.getMessage(), HttpStatus.INTERNAL_ERROR.getStatusCode());
@@ -89,9 +89,13 @@ public class MyHttpHandler implements HttpHandler {
 
         OutputStream outputStream = httpExchange.getResponseBody();
 
-        httpExchange.sendResponseHeaders(status, ((String) content).length());
+        if(Objects.equals(content, "null")) {
+            content = "";
+        }
 
+        httpExchange.sendResponseHeaders(status, ((String) content).length());
         outputStream.write(((String) content).getBytes());
+
         outputStream.flush();
         outputStream.close();
     }

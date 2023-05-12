@@ -1,6 +1,5 @@
 package efs.task.todoapp.init.commons.http;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -10,6 +9,7 @@ public enum HttpStatus {
     INTERNAL_ERROR(500),
     UNAUTHORIZED(401),
     FORBIDDEN(403),
+    ALREADY_EXISTS(409),
     BAD_REQUEST(400);
 
     private final int statusCode;

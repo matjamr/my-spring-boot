@@ -1,11 +1,9 @@
 package efs.task.todoapp.repository;
 
 import efs.task.todoapp.init.annotationExecutors.annotations.Component;
+import efs.task.todoapp.model.entity.TaskEntity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Component
@@ -16,7 +14,9 @@ public class TaskRepository implements Repository<UUID, TaskEntity> {
 
     @Override
     public UUID save(TaskEntity taskEntity) {
-        return null;
+        return Optional.ofNullable(map.put(taskEntity.getId(), taskEntity))
+                .map(TaskEntity::getId)
+                .orElse(null);
     }
 
     @Override

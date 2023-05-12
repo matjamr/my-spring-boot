@@ -1,6 +1,7 @@
 package efs.task.todoapp.repository;
 
 import efs.task.todoapp.init.annotationExecutors.annotations.Component;
+import efs.task.todoapp.model.entity.UserEntity;
 
 import java.util.HashMap;
 import java.util.List;
