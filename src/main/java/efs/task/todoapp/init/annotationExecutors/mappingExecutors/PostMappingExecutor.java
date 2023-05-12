@@ -13,7 +13,8 @@ public class PostMappingExecutor implements MappingExecutor {
     public void execute(Method method) {
         DependencyContext.MAPPING_MAP.put(new MappingRecord(
                 method.getAnnotation(PostMapping.class).path(),
-                HttpMethod.POST), method);
+                HttpMethod.POST,
+                method.getAnnotation(PostMapping.class).secured()), method);
     }
 
 }

@@ -12,6 +12,6 @@ public class ServiceError extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "ERROR: " + message;
+        return "";
     }
 }

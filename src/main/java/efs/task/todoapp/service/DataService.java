@@ -11,6 +11,7 @@ import efs.task.todoapp.repository.TaskRepository;
 import efs.task.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -41,5 +42,14 @@ public class DataService {
         return UUIDResponse.builder()
                 .id(created.toString())
                 .build();
+    }
+
+    public List<DataDto> getTasks() {
+        return taskRepository
+                .query(taskEntity -> true).stream()
+                .map(taskEntity -> DataDto.builder()
+                        .due(taskEntity.getDue())
+                        .description(taskEntity.getDescription())
+                        .build()).toList();
     }
 }

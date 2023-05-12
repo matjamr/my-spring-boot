@@ -8,10 +8,12 @@ import efs.task.todoapp.init.annotationExecutors.annotations.RequiredBody;
 import efs.task.todoapp.init.annotationExecutors.annotations.Response;
 import efs.task.todoapp.init.commons.error.HttpStatusError;
 import efs.task.todoapp.model.pojos.UserDto;
+import efs.task.todoapp.service.UserService;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -33,14 +35,19 @@ public class MyHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        var methodFromMapping = MAPPING_MAP.get(new MappingRecord(
-                httpExchange.getRequestURI().getPath(),
-                HttpMethod.valueOf(httpExchange.getRequestMethod())
-        ));
+
+        MappingRecord mappingRec = MAPPING_MAP.keySet()
+                .stream()
+                .filter(mappingRecord -> mappingRecord.path().equals(httpExchange.getRequestURI().getPath()) &&
+                        mappingRecord.method().equals(HttpMethod.valueOf(httpExchange.getRequestMethod())))
+                .findFirst()
+                .orElse(null);
+
+         Method methodFromMapping = MAPPING_MAP.get(mappingRec);
 
         try {
             if (isNull(methodFromMapping)) {
-                throw new Exception("No mapping found!");
+                throw new HttpStatusError("No mapping found!", HttpStatus.NOT_FOUND);
             }
 
             final Optional<Parameter> requiredBodyRQ = Arrays.stream(methodFromMapping.getParameters())
@@ -49,17 +56,38 @@ public class MyHttpHandler implements HttpHandler {
 
             final Object entityToBeReturned;
 
-            if(requiredBodyRQ.isEmpty()) {
-                entityToBeReturned = methodFromMapping.invoke(BEAN_MAP.get(methodFromMapping.getDeclaringClass()).getInstance());
-            } else {
-                var paramClassType = requiredBodyRQ.get().getParameterizedType();
-                var dynamicType = Class.forName(paramClassType.getTypeName());
-                var requestBodyContent = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            UserDto returnedUser = null;
 
-                var test = gson.fromJson(requestBodyContent, dynamicType);
+            // parse security header
+            assert mappingRec != null;
+            if(mappingRec.isSecured()) {
+                if(!httpExchange.getRequestHeaders().containsKey("auth")) {
+                    throw new HttpStatusError("", HttpStatus.UNAUTHORIZED);
+                }
+
+                String baseAuth = httpExchange.getRequestHeaders().get("auth")
+                        .stream()
+                        .findFirst()
+                        .get();
+
+                var userServiceObj = BEAN_MAP.get(UserService.class).getInstance();
+                var tescik = Arrays.stream(BEAN_MAP.get(UserService.class).getClass_().getMethods())
+                        .filter(method -> method.getName().equals("verifyUser"))
+                        .findFirst()
+                        .orElseThrow(()-> new HttpStatusError("UNEXPECTED ERR", HttpStatus.INTERNAL_ERROR));
+
+                returnedUser = (UserDto) tescik.invoke(userServiceObj, baseAuth);
+            }
+
+            if(requiredBodyRQ.isEmpty()) {
+                entityToBeReturned = methodFromMapping.invoke(BEAN_MAP.get(methodFromMapping.getDeclaringClass()).getInstance(), returnedUser, 3);
+            } else {
+                Result result = getResult(httpExchange, requiredBodyRQ);
+
+                var jsonBody = gson.fromJson(result.requestBodyContent(), result.dynamicType());
 
                 entityToBeReturned = methodFromMapping.invoke(BEAN_MAP.get(methodFromMapping.getDeclaringClass()).getInstance(),
-                        test);
+                        jsonBody, returnedUser, 3);
             }
 
             // Here is thing to get success response successHttpStatus code
@@ -80,9 +108,20 @@ public class MyHttpHandler implements HttpHandler {
                     handleResponse(httpExchange,  "", httpErr.getHttpStatus().getStatusCode());
                 }
             } else {
-                handleResponse(httpExchange, e.getMessage(), HttpStatus.INTERNAL_ERROR.getStatusCode());
+                handleResponse(httpExchange, "", HttpStatus.INTERNAL_ERROR.getStatusCode());
             }
         }
+    }
+
+    private static Result getResult(HttpExchange httpExchange, Optional<Parameter> requiredBodyRQ) throws ClassNotFoundException, IOException {
+        var paramClassType = requiredBodyRQ.get().getParameterizedType();
+        var dynamicType = Class.forName(paramClassType.getTypeName());
+        var requestBodyContent = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        Result result = new Result(dynamicType, requestBodyContent);
+        return result;
+    }
+
+    private record Result(Class<?> dynamicType, String requestBodyContent) {
     }
 
     private void handleResponse(HttpExchange httpExchange, Object content, int status) throws IOException {
@@ -92,6 +131,7 @@ public class MyHttpHandler implements HttpHandler {
         if(Objects.equals(content, "null")) {
             content = "";
         }
+        httpExchange.getResponseHeaders().add("content-type", "application/json");
 
         httpExchange.sendResponseHeaders(status, ((String) content).length());
         outputStream.write(((String) content).getBytes());

@@ -27,8 +27,8 @@ public class MyHttpAssert<T> extends AbstractAssert<MyHttpAssert<T>, HttpRespons
         return this;
     }
 
-    public MyHttpAssert<T> expect(Function<HttpResponse<T>, Boolean> supplier) {
-        assertTrue(supplier.apply(actual));
+    public MyHttpAssert<T> expect(Function<HttpResponse<T>, Boolean> function) {
+        assertTrue(function.apply(actual));
 
         return this;
     }

@@ -13,7 +13,8 @@ public class GetMappingExecutor implements MappingExecutor {
     public void execute(Method method) {
         DependencyContext.MAPPING_MAP.put(new MappingRecord(
                 method.getAnnotation(GetMapping.class).path(),
-                HttpMethod.GET), method);
+                HttpMethod.GET,
+                method.getAnnotation(GetMapping.class).secured()), method);
     }
 
 }

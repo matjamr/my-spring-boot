@@ -37,4 +37,9 @@ public class UserService {
                 .build());
     }
 
+    public UserDto verifyUser(String encodedUser) {
+
+        return new UserDto("Andrzej", "Golota");
+    }
+
 }

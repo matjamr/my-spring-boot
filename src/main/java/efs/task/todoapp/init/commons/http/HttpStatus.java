@@ -10,7 +10,8 @@ public enum HttpStatus {
     UNAUTHORIZED(401),
     FORBIDDEN(403),
     ALREADY_EXISTS(409),
-    BAD_REQUEST(400);
+    BAD_REQUEST(400),
+    NOT_FOUND(404);
 
     private final int statusCode;
 

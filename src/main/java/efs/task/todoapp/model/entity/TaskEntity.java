@@ -11,4 +11,5 @@ public class TaskEntity {
     private UUID id;
     private String description;
     private String due;
+    private String createdBy;
 }

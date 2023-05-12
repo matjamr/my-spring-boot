@@ -6,6 +6,8 @@ import efs.task.todoapp.model.entity.TaskEntity;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static java.util.Objects.nonNull;
+
 @Component
 @efs.task.todoapp.init.annotationExecutors.annotations.Repository
 public class TaskRepository implements Repository<UUID, TaskEntity> {
@@ -16,26 +18,28 @@ public class TaskRepository implements Repository<UUID, TaskEntity> {
     public UUID save(TaskEntity taskEntity) {
         return Optional.ofNullable(map.put(taskEntity.getId(), taskEntity))
                 .map(TaskEntity::getId)
-                .orElse(null);
+                .orElse(taskEntity.getId());
     }
 
     @Override
     public TaskEntity query(UUID uuid) {
-        return null;
+        return map.get(uuid);
     }
 
     @Override
     public List<TaskEntity> query(Predicate<TaskEntity> condition) {
-        return null;
+        return map.values().stream()
+                .filter(condition)
+                .toList();
     }
 
     @Override
     public TaskEntity update(UUID uuid, TaskEntity taskEntity) {
-        return null;
+        return map.replace(uuid, taskEntity);
     }
 
     @Override
     public boolean delete(UUID uuid) {
-        return false;
+        return nonNull(map.remove(uuid));
     }
 }

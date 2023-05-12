@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface PostMapping {
     public String path() default "";
+    boolean secured() default false;
 }
