@@ -18,8 +18,8 @@ public class UserRepository implements Repository<String, UserEntity> {
 
     @Override
     public String save(UserEntity userEntity) {
-        db.put(userEntity.getId(), userEntity);
-        return userEntity.getId();
+        db.put(userEntity.getUsername(), userEntity);
+        return userEntity.getUsername();
     }
 
     @Override

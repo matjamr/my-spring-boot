@@ -26,18 +26,18 @@ public class DataController {
         return "121231231!@#!@#!@#! GETTT";
     }
 
-    @PutMapping(path = "/todo/task/{id}", secured = true)
+    @PutMapping(path = "/todo/task/{id}")
     public String updateTaskById(UserDto userDto) {
         return "121231231!@#!@#!@#! UDPATE";
     }
 
-    @DeleteMapping(path = "/todo/task/{id}", secured = true)
+    @DeleteMapping(path = "/todo/task/{id}")
     public String deleteTaskById(UserDto userDto) {
         return "121231231!@#!@#!@#! DELETE";
     }
 
-    @PostMapping(path = "/task", secured = true)
-    public UUIDResponse test2Method(@RequiredBody DataDto dataDto, UserDto userDto, Integer aa) {
+    @PostMapping(path = "/task")
+    public UUIDResponse saveData(@RequiredBody DataDto dataDto, @Principal UserDto userDto) {
         return dataService.save(dataDto);
     }
 

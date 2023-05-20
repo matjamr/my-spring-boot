@@ -1,7 +1,7 @@
 package efs.task.todoapp.web;
 
 import com.sun.net.httpserver.HttpServer;
-import efs.task.todoapp.init.commons.http.MyHttpHandler;
+import efs.task.todoapp.init.http.MyHttpHandler;
 import efs.task.todoapp.init.HandicappedDependencyInjectionReader;
 
 import java.io.IOException;
