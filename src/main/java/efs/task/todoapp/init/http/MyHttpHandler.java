@@ -27,7 +27,8 @@ public class MyHttpHandler implements HttpHandler {
 
     private static final List<ParameterExecutor> parameterExecutors = List.of(
             new RequiredBodyExecutor(),
-            new PrincipalExecutor()
+            new PrincipalExecutor(),
+            new PathVariableExecutor()
     );
 
     @Override

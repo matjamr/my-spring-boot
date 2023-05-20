@@ -7,6 +7,7 @@ import efs.task.todoapp.init.commons.http.HttpStatus;
 import efs.task.todoapp.model.entity.TaskEntity;
 import efs.task.todoapp.model.pojos.DataDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
+import efs.task.todoapp.model.pojos.UserDto;
 import efs.task.todoapp.repository.TaskRepository;
 import efs.task.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class DataService {
 
     }
 
-    public UUIDResponse save(DataDto dataDto) {
+    public UUIDResponse save(DataDto dataDto, UserDto userDto) {
 
         if(isNull(dataDto.getDescription()) || isNull(dataDto.getDue())) {
             throw new ServiceError("Invalid data data", HttpStatus.BAD_REQUEST);
@@ -37,6 +38,7 @@ public class DataService {
                         .id(UUID.randomUUID())
                         .description(dataDto.getDescription())
                         .due(dataDto.getDue())
+                        .createdBy(userDto.getUsername())
                 .build());
 
         return UUIDResponse.builder()
@@ -44,12 +46,9 @@ public class DataService {
                 .build();
     }
 
-    public List<DataDto> getTasks() {
+    public List<TaskEntity> getTasks(UserDto createdBy) {
         return taskRepository
-                .query(taskEntity -> true).stream()
-                .map(taskEntity -> DataDto.builder()
-                        .due(taskEntity.getDue())
-                        .description(taskEntity.getDescription())
-                        .build()).toList();
+                .query(taskEntity -> taskEntity.getCreatedBy().equals(createdBy.getUsername())).stream()
+                .toList();
     }
 }

@@ -14,12 +14,6 @@ import java.net.http.HttpRequest;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
 public class UserEndpointTest extends BaseTest {
-    private HttpClient httpClient;
-
-    @BeforeEach
-    void setUp() {
-        httpClient = HttpClient.newHttpClient();
-    }
 
     @Test
     @Timeout(1)
@@ -63,7 +57,7 @@ public class UserEndpointTest extends BaseTest {
 
     @Test
     @Timeout(1)
-    void invalidData_should400() throws IOException, InterruptedException {
+    void invalidDataCases_should400() throws IOException, InterruptedException {
         //given
         var httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(USER_APP_PATH))
@@ -85,6 +79,33 @@ public class UserEndpointTest extends BaseTest {
 
         MyHttpAssert.assertThat(httpResponse2)
                 .hasStatusCode(HttpStatus.BAD_REQUEST);
+
+    }
+
+    @Test
+    @Timeout(1)
+    void userAlreadyExists_should409() throws IOException, InterruptedException {
+        //given
+        var httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(USER_APP_PATH))
+                .POST(toJson(buildUser(USERNAME_1, PASSWORD_1)))
+                .build();
+
+        var httpRequest2 = HttpRequest.newBuilder()
+                .uri(URI.create(USER_APP_PATH))
+                .POST(toJson(buildUser(USERNAME_1, PASSWORD_1)))
+                .build();
+
+        //when
+        var httpResponse = httpClient.send(httpRequest, ofString());
+        var httpResponse2 = httpClient.send(httpRequest2, ofString());
+
+        //then
+        MyHttpAssert.assertThat(httpResponse)
+                .hasStatusCode(HttpStatus.CREATED);
+
+        MyHttpAssert.assertThat(httpResponse2)
+                .hasStatusCode(HttpStatus.ALREADY_EXISTS);
 
     }
 }

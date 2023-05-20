@@ -5,6 +5,7 @@ import org.assertj.core.api.AbstractAssert;
 
 import java.net.http.HttpResponse;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,8 +28,14 @@ public class MyHttpAssert<T> extends AbstractAssert<MyHttpAssert<T>, HttpRespons
         return this;
     }
 
-    public MyHttpAssert<T> expect(Function<HttpResponse<T>, Boolean> function) {
+    public MyHttpAssert<T> expectTrue(Function<HttpResponse<T>, Boolean> function) {
         assertTrue(function.apply(actual));
+
+        return this;
+    }
+
+    public MyHttpAssert<T> expect(Function<HttpResponse<T>, Void> function) {
+        function.apply(actual);
 
         return this;
     }
