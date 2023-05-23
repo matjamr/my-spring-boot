@@ -1,22 +1,21 @@
 package efs.task.todoapp.assertions;
 
-import efs.task.todoapp.model.entity.TaskEntity;
 import efs.task.todoapp.model.pojos.DataDto;
+import efs.task.todoapp.model.pojos.DataResponseDto;
 import org.assertj.core.api.AbstractAssert;
 
-import java.net.http.HttpResponse;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TaskEntityAssert extends AbstractAssert<TaskEntityAssert, TaskEntity> {
+public class TaskEntityAssert extends AbstractAssert<TaskEntityAssert, DataResponseDto> {
 
-    public TaskEntityAssert(TaskEntity actual) {
+    public TaskEntityAssert(DataResponseDto actual) {
         super(actual, TaskEntityAssert.class);
     }
 
-    public static TaskEntityAssert assertThat(TaskEntity actual) {
+    public static TaskEntityAssert assertThat(DataResponseDto actual) {
         return new TaskEntityAssert(actual);
     }
 

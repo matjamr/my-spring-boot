@@ -8,6 +8,7 @@ import efs.task.todoapp.init.annotationExecutors.annotations.Response;
 import efs.task.todoapp.init.commons.error.HttpStatusError;
 import efs.task.todoapp.init.commons.http.HttpMethod;
 import efs.task.todoapp.init.commons.http.HttpStatus;
+import efs.task.todoapp.init.commons.http.HttpUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,12 +32,20 @@ public class MyHttpHandler implements HttpHandler {
             new PathVariableExecutor()
     );
 
+    private boolean pathMatches(MappingRecord mappingRecord, String path) {
+        if(mappingRecord.hasPathVariable()) {
+            return HttpUtils.handlePathVarUri(path).equals(mappingRecord.path());
+        }
+
+        return path.equals(mappingRecord.path());
+    }
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
 
         MappingRecord mappingRec = MAPPING_MAP.keySet()
                 .stream()
-                .filter(mappingRecord -> mappingRecord.path().equals(httpExchange.getRequestURI().getPath()) &&
+                .filter(mappingRecord -> pathMatches(mappingRecord, httpExchange.getRequestURI().getPath()) &&
                         mappingRecord.method().equals(HttpMethod.valueOf(httpExchange.getRequestMethod())))
                 .findFirst()
                 .orElse(null);

@@ -3,8 +3,7 @@ package efs.task.todoapp;
 import efs.task.todoapp.assertions.MyHttpAssert;
 import efs.task.todoapp.assertions.TaskEntityAssert;
 import efs.task.todoapp.init.commons.http.HttpStatus;
-import efs.task.todoapp.model.entity.TaskEntity;
-import efs.task.todoapp.model.pojos.DataDto;
+import efs.task.todoapp.model.pojos.DataResponseDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -15,9 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -124,15 +120,11 @@ public class TasksEndpointTest extends BaseTest {
                 .hasStatusCode(HttpStatus.OK)
                 .expect((httpResponse_) -> {
 
-                    var response = fromJson(httpResponse_.body(), TaskEntity[].class);
+                    var response = fromJson(httpResponse_.body(), DataResponseDto[].class);
 
                     TaskEntityAssert.assertThat(response[0])
                             .hasUUID()
                             .deeplyEquals(data1);
-
-                    TaskEntityAssert.assertThat(response[1])
-                            .hasUUID()
-                            .deeplyEquals(data2);
 
                     return null;
                 });
@@ -180,17 +172,16 @@ public class TasksEndpointTest extends BaseTest {
 
         //given
         addUser(USERNAME_1, PASSWORD_1);
-        var data1 = addTask(DSC_1, DUE_1);
         var data2 = addTask(DSC_2, DUE_2);
 
         var httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(TODO_APP_PATH.concat("/")))
+                .uri(URI.create(TODO_APP_PATH))
                 .GET()
                 .header("auth", buildAuthHeader(USERNAME_1, PASSWORD_1))
                 .build();
 
         var httpResponse = httpClient.send(httpRequest, ofString());
-        var response = fromJson(httpResponse.body(), TaskEntity[].class);
+        var response = fromJson(httpResponse.body(), DataResponseDto[].class);
 
 
         var httpRequest2 = HttpRequest.newBuilder()
@@ -200,16 +191,14 @@ public class TasksEndpointTest extends BaseTest {
                 .build();
 
         //when
-        var httpResponse2 = httpClient.send(httpRequest, ofString());
+        var httpResponse2 = httpClient.send(httpRequest2, ofString());
 
         //then
         MyHttpAssert.assertThat(httpResponse2)
-                .hasStatusCode(HttpStatus.OK)
-                .expect((res) -> {
-                    System.out.println(res);
+                .hasStatusCode(HttpStatus.OK);
 
-                    return null;
-                });
-
+        TaskEntityAssert.assertThat(fromJson(httpResponse2.body(), DataResponseDto.class))
+                .deeplyEquals(data2)
+                .hasUUID();
     }
 }

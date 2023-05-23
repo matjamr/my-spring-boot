@@ -4,8 +4,8 @@ import efs.task.todoapp.init.annotationExecutors.annotations.*;
 import efs.task.todoapp.init.commons.error.HttpStatusError;
 import efs.task.todoapp.init.commons.error.ServiceError;
 import efs.task.todoapp.init.commons.http.HttpStatus;
-import efs.task.todoapp.model.entity.TaskEntity;
 import efs.task.todoapp.model.pojos.DataDto;
+import efs.task.todoapp.model.pojos.DataResponseDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
 import efs.task.todoapp.model.pojos.UserDto;
 import efs.task.todoapp.service.DataService;
@@ -21,13 +21,17 @@ public class DataController {
     private final DataService dataService;
 
     @GetMapping(path = "/task")
-    public List<TaskEntity> getTasks(@Principal UserDto userDto) {
+    public List<DataResponseDto> getTasks(@Principal UserDto userDto) {
         return dataService.getTasks(userDto);
     }
 
     @GetMapping(path = "/task/{id}")
-    public String getTaskById(@Principal UserDto userDto, @PathVariable String id) {
-        return "121231231!@#!@#!@#! GETTT";
+    public DataResponseDto getTaskById(@Principal UserDto userDto, @PathVariable String id) {
+        try {
+            return dataService.getTaskById(userDto, id);
+        } catch (ServiceError e) {
+            throw new HttpStatusError(e.getMessage(), e.getHttpStatus());
+        }
     }
 
     @PutMapping(path = "/task/{id}")

@@ -4,8 +4,10 @@ import efs.task.todoapp.init.annotationExecutors.annotations.Component;
 import efs.task.todoapp.init.annotationExecutors.annotations.Service;
 import efs.task.todoapp.init.commons.error.ServiceError;
 import efs.task.todoapp.init.commons.http.HttpStatus;
+import efs.task.todoapp.mappers.Mapper;
 import efs.task.todoapp.model.entity.TaskEntity;
 import efs.task.todoapp.model.pojos.DataDto;
+import efs.task.todoapp.model.pojos.DataResponseDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
 import efs.task.todoapp.model.pojos.UserDto;
 import efs.task.todoapp.repository.TaskRepository;
@@ -13,6 +15,7 @@ import efs.task.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -23,10 +26,7 @@ import static java.util.Objects.isNull;
 public class DataService {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
-
-    public void test() {
-
-    }
+    private final Mapper mapper;
 
     public UUIDResponse save(DataDto dataDto, UserDto userDto) {
 
@@ -46,9 +46,23 @@ public class DataService {
                 .build();
     }
 
-    public List<TaskEntity> getTasks(UserDto createdBy) {
+    public List<DataResponseDto> getTasks(UserDto createdBy) {
         return taskRepository
-                .query(taskEntity -> taskEntity.getCreatedBy().equals(createdBy.getUsername())).stream()
+                .query(taskEntity -> taskEntity.getCreatedBy().equals(createdBy.getUsername()))
+                .stream()
+                .map(mapper::mapTo)
                 .toList();
+    }
+
+    public DataResponseDto getTaskById(UserDto userDto, String id) {
+        var task = taskRepository.query(UUID.fromString(id));
+
+        if(isNull(task))
+            throw new ServiceError("Task not found", HttpStatus.NOT_FOUND);
+
+        if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
+            throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
+
+        return mapper.mapTo(task);
     }
 }
