@@ -14,7 +14,7 @@ import static java.util.Objects.isNull;
 @efs.task.todoapp.init.annotationExecutors.annotations.Repository
 public class UserRepository implements Repository<String, UserEntity> {
 
-    private final Map<String, UserEntity> db = new HashMap<>();
+    public final Map<String, UserEntity> db = new HashMap<>();
 
     @Override
     public String save(UserEntity userEntity) {
@@ -24,11 +24,7 @@ public class UserRepository implements Repository<String, UserEntity> {
 
     @Override
     public UserEntity query(String s) {
-        return db.keySet().stream()
-                .filter(key -> key.equals(s))
-                .map(db::get)
-                .findFirst()
-                .orElse(null);
+        return db.get(s);
     }
 
     @Override

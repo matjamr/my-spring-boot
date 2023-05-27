@@ -7,7 +7,6 @@ import efs.task.todoapp.util.ToDoServerExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -63,7 +62,7 @@ public abstract class BaseTest {
     protected void addUser(final String username, final String password) throws IOException, InterruptedException {
         var httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(USER_APP_PATH))
-                .POST(toJson(buildUser(USERNAME_1, PASSWORD_1)))
+                .POST(toJson(buildUser(username, password)))
                 .build();
 
         var httpResponse = httpClient.send(httpRequest, ofString());

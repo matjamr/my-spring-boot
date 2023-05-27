@@ -42,7 +42,6 @@ public class MyHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-
         MappingRecord mappingRec = MAPPING_MAP.keySet()
                 .stream()
                 .filter(mappingRecord -> pathMatches(mappingRecord, httpExchange.getRequestURI().getPath()) &&

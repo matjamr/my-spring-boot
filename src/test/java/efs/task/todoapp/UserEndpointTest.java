@@ -15,6 +15,13 @@ import static java.net.http.HttpResponse.BodyHandlers.ofString;
 
 public class UserEndpointTest extends BaseTest {
 
+    private HttpClient httpClient;
+
+    @BeforeEach
+    void setUp() {
+        httpClient = HttpClient.newHttpClient();
+    }
+
     @Test
     @Timeout(1)
     void validCreateUserRQ_should201() throws IOException, InterruptedException {

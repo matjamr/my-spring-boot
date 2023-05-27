@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @Component
@@ -30,7 +31,7 @@ public class UserService {
             throw new ServiceError("Invalid user data", HttpStatus.BAD_REQUEST);
         }
 
-        if(!userRepository.query(user1 -> user1.getUsername().equals(user.getUsername())).isEmpty()) {
+        if(nonNull(userRepository.query(user.getUsername()))) {
             throw new ServiceError("User with this data exists", HttpStatus.ALREADY_EXISTS);
         }
 
@@ -49,6 +50,9 @@ public class UserService {
                 .username(data[0])
                 .password(data[1])
                 .build();
+
+        System.out.println("Veryfiing user: " + userDto);
+        System.out.println(userRepository.db);
 
         return Optional.ofNullable(userRepository.query(userDto.getUsername()))
                 .filter(user -> user.getPassword().equals(userDto.getPassword()))
