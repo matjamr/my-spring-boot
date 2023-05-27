@@ -65,4 +65,32 @@ public class DataService {
 
         return mapper.mapTo(task);
     }
+
+    public DataResponseDto putTaskById(DataDto dataDto, UserDto userDto, String id) {
+        var task = taskRepository.query(UUID.fromString(id));
+
+        if(isNull(dataDto.getDescription()) || isNull(dataDto.getDue())) {
+            throw new ServiceError("Invalid data data", HttpStatus.BAD_REQUEST);
+        }
+
+        if(isNull(task))
+            throw new ServiceError("Task not found", HttpStatus.NOT_FOUND);
+
+        if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
+            throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
+
+        return mapper.mapTo(taskRepository.update(UUID.fromString(id), task));
+    }
+
+    public void deleteTaskById(UserDto userDto, String id) {
+        var task = taskRepository.query(UUID.fromString(id));
+
+        if(isNull(task))
+            throw new ServiceError("Task not found", HttpStatus.NOT_FOUND);
+
+        if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
+            throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
+
+        taskRepository.delete(UUID.fromString(id));
+    }
 }

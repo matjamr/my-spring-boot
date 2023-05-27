@@ -35,13 +35,21 @@ public class DataController {
     }
 
     @PutMapping(path = "/task/{id}")
-    public String updateTaskById(@Principal UserDto userDto, @PathVariable String id) {
-        return "121231231!@#!@#!@#! UDPATE";
+    public DataResponseDto updateTaskById(@RequiredBody DataDto dataDto, @Principal UserDto userDto, @PathVariable String id) {
+        try {
+            return dataService.putTaskById(dataDto, userDto, id);
+        } catch (ServiceError e) {
+            throw new HttpStatusError(e.getMessage(), e.getHttpStatus());
+        }
     }
 
     @DeleteMapping(path = "/task/{id}")
-    public String deleteTaskById(@Principal UserDto userDto, @PathVariable String id) {
-        return "121231231!@#!@#!@#! DELETE";
+    public void deleteTaskById(@Principal UserDto userDto, @PathVariable String id) {
+        try {
+            dataService.deleteTaskById(userDto, id);
+        } catch (ServiceError e) {
+            throw new HttpStatusError(e.getMessage(), e.getHttpStatus());
+        }
     }
 
 
