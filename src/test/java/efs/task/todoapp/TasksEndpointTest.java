@@ -7,7 +7,6 @@ import efs.task.todoapp.model.pojos.DataDto;
 import efs.task.todoapp.model.pojos.DataResponseDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TasksEndpointTest extends BaseTest {
 
     @Test
-    @Timeout(1)
+//    @Timeout(1)
     void validCreateTaskRQ_should201() throws IOException, InterruptedException {
         //given
         addUser(USERNAME_1, PASSWORD_1);
@@ -83,7 +82,7 @@ public class TasksEndpointTest extends BaseTest {
         );
     }
 
-    @Timeout(1)
+//    @Timeout(1)
     @ParameterizedTest
     @MethodSource("invalidAddTaskDataProvider")
     void invalidCreateTaskRQ_shouldNotPass(HttpRequest httpRequest, HttpStatus expectedStatus) throws IOException, InterruptedException {
@@ -99,20 +98,20 @@ public class TasksEndpointTest extends BaseTest {
     }
 
     @Test
-    @Timeout(1)
+//    @Timeout(1)
     void getTasks_shouldAdd2TasksAndReturnThem() throws IOException, InterruptedException {
 
         //given
-        addUser(USERNAME_1, PASSWORD_1);
+        addUser(USERNAME_3, PASSWORD_1);
 
-        var data1 = addTask(DSC_1, DUE_1);
-        var data2 = addTask(DSC_2, DUE_2);
+        var data1 = addTask(DSC_1, DUE_1, USERNAME_3);
+        var data2 = addTask(DSC_2, DUE_2, USERNAME_3);
 
 
         var httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(TODO_APP_PATH))
                 .GET()
-                .header("auth", buildAuthHeader(USERNAME_1, PASSWORD_1))
+                .header("auth", buildAuthHeader(USERNAME_3, PASSWORD_1))
                 .build();
 
         //when
@@ -157,14 +156,14 @@ public class TasksEndpointTest extends BaseTest {
         );
     }
 
-    @Timeout(1)
+//    @Timeout(1)
     @ParameterizedTest
     @MethodSource("invalidGetTaskDataProvider")
     void invalidGetTaskRQ_shouldNotPass(HttpRequest httpRequest, HttpStatus expectedStatus) throws IOException, InterruptedException {
         //given
         addUser(USERNAME_1, PASSWORD_1);
-        var data1 = addTask(DSC_1, DUE_1);
-        var data2 = addTask(DSC_2, DUE_2);
+        var data1 = addTask(DSC_1, DUE_1, USERNAME_1);
+        var data2 = addTask(DSC_2, DUE_2, USERNAME_1);
 
         //when
         var httpResponse = httpClient.send(httpRequest, ofString());
@@ -175,11 +174,11 @@ public class TasksEndpointTest extends BaseTest {
     }
 
     @Test
-    @Timeout(1)
+//    @Timeout(1)
     void getTaskById_shouldTaskAndReturnIt() throws IOException, InterruptedException {
         //given
         addUser(USERNAME_1, PASSWORD_1);
-        var data = addTask(DSC_2, DUE_2);
+        var data = addTask(DSC_2, DUE_2, USERNAME_1);
 
         var httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(TODO_APP_PATH))

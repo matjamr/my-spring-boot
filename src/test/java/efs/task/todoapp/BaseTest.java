@@ -1,6 +1,8 @@
 package efs.task.todoapp;
 
 import com.google.gson.Gson;
+import efs.task.todoapp.assertions.MyHttpAssert;
+import efs.task.todoapp.init.commons.http.HttpStatus;
 import efs.task.todoapp.model.pojos.DataDto;
 import efs.task.todoapp.model.pojos.UserDto;
 import efs.task.todoapp.util.ToDoServerExtension;
@@ -31,6 +33,7 @@ public abstract class BaseTest {
     protected static final String USERNAME_1 = "Andrzej";
     protected static final String PASSWORD_1 = "Andrzej_haslo";
     protected static final String USERNAME_2 = "Marcin";
+    protected static final String USERNAME_3 = "Marcinaa";
     protected static final String PASSWORD_2 = "Marcin_haselko";
     protected static final String DSC_1 = "Kup mleko";
     protected static final String DSC_2 = "Kup mleko2";
@@ -66,13 +69,16 @@ public abstract class BaseTest {
                 .build();
 
         var httpResponse = httpClient.send(httpRequest, ofString());
+
+        MyHttpAssert.assertThat(httpResponse)
+                .hasStatusCode(HttpStatus.CREATED);
     }
 
-    protected DataDto addTask(final String dsc, final String due) throws IOException, InterruptedException {
+    protected DataDto addTask(final String dsc, final String due, final String username) throws IOException, InterruptedException {
         var httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(TODO_APP_PATH))
                 .POST(toJson(buildData(dsc, due)))
-                .header("auth", buildAuthHeader(USERNAME_1, PASSWORD_1))
+                .header("auth", buildAuthHeader(username, PASSWORD_1))
                 .build();
 
         var httpResponse = httpClient.send(httpRequest, ofString());
