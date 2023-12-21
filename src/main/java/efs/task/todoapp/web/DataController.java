@@ -4,14 +4,13 @@ import efs.task.todoapp.init.annotationExecutors.annotations.*;
 import efs.task.todoapp.init.commons.error.HttpStatusError;
 import efs.task.todoapp.init.commons.error.ServiceError;
 import efs.task.todoapp.init.commons.http.HttpStatus;
-import efs.task.todoapp.model.pojos.DataDto;
-import efs.task.todoapp.model.pojos.DataResponseDto;
-import efs.task.todoapp.model.pojos.UUIDResponse;
-import efs.task.todoapp.model.pojos.UserDto;
+import efs.task.todoapp.model.pojos.*;
 import efs.task.todoapp.service.DataService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+
+import static efs.task.todoapp.model.pojos.UserDtoProxy.createUser;
 
 @Component
 @RestController
@@ -22,7 +21,7 @@ public class DataController {
 
     @GetMapping(path = "/task")
     public List<DataResponseDto> getTasks(@Principal UserDto userDto) {
-        return dataService.getTasks(userDto);
+        return dataService.getTasks(createUser(userDto));
     }
 
     @GetMapping(path = "/task/{id}")

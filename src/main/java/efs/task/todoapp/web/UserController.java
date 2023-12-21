@@ -8,6 +8,8 @@ import efs.task.todoapp.model.pojos.UserDto;
 import efs.task.todoapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import static efs.task.todoapp.model.pojos.UserDtoProxy.createUser;
+
 @Component
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class UserController {
     @Response(status = HttpStatus.CREATED)
     public void saveUser(@RequiredBody UserDto user) {
         try {
-            userService.saveUser(user);
+            userService.saveUser(createUser(user));
         } catch (ServiceError e) {
             throw new HttpStatusError(e.getMessage(), e.getHttpStatus());
         }

@@ -6,6 +6,7 @@ import efs.task.todoapp.init.commons.error.ServiceError;
 import efs.task.todoapp.init.commons.http.HttpStatus;
 import efs.task.todoapp.mappers.Mapper;
 import efs.task.todoapp.model.entity.TaskEntity;
+import efs.task.todoapp.model.entity.TaskEntityProxy;
 import efs.task.todoapp.model.pojos.DataDto;
 import efs.task.todoapp.model.pojos.DataResponseDto;
 import efs.task.todoapp.model.pojos.UUIDResponse;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static efs.task.todoapp.model.entity.TaskEntityProxy.createTask;
 import static java.util.Objects.isNull;
 
 @Service
@@ -29,17 +31,12 @@ public class DataService {
     private final Mapper mapper;
 
     public UUIDResponse save(DataDto dataDto, UserDto userDto) {
-
-        if(isNull(dataDto.getDescription()) || isNull(dataDto.getDue())) {
-            throw new ServiceError("Invalid data data", HttpStatus.BAD_REQUEST);
-        }
-
-        var created = taskRepository.save(TaskEntity.builder()
-                        .id(UUID.randomUUID())
-                        .description(dataDto.getDescription())
-                        .due(dataDto.getDue())
-                        .createdBy(userDto.getUsername())
-                .build());
+        var created = taskRepository.save(createTask(TaskEntity.builder()
+                .id(UUID.randomUUID())
+                .description(dataDto.getDescription())
+                .due(dataDto.getDue())
+                .createdBy(userDto.getUsername())
+                .build()));
 
         return UUIDResponse.builder()
                 .id(created.toString())
