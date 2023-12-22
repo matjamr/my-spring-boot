@@ -1,5 +1,9 @@
 package efs.task.todoapp.model.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,10 +12,20 @@ import java.util.UUID;
 
 @Builder
 @Data
+@Entity
+@Table(name = "task_entity")
 public class TaskEntity {
+
+    @Id
     private UUID id;
+
+    @Column
     private String description;
+
+    @Column
     private String due;
+
+    @Column
     private String createdBy;
 
 
