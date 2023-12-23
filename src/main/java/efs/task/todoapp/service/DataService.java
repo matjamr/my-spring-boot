@@ -32,7 +32,6 @@ public class DataService {
 
     public UUIDResponse save(DataDto dataDto, UserDto userDto) {
         var created = taskRepository.save(createTask(TaskEntity.builder()
-                .id(UUID.randomUUID())
                 .description(dataDto.getDescription())
                 .due(dataDto.getDue())
                 .createdBy(userDto.getUsername())
@@ -52,7 +51,7 @@ public class DataService {
     }
 
     public DataResponseDto getTaskById(UserDto userDto, String id) {
-        var task = taskRepository.query(UUID.fromString(id));
+        var task = taskRepository.query(id);
 
         if(isNull(task))
             throw new ServiceError("Task not found", HttpStatus.NOT_FOUND);
@@ -64,7 +63,7 @@ public class DataService {
     }
 
     public DataResponseDto putTaskById(DataDto dataDto, UserDto userDto, String id) {
-        var task = taskRepository.query(UUID.fromString(id));
+        var task = taskRepository.query(id);
 
         if(isNull(dataDto.getDescription()) || isNull(dataDto.getDue())) {
             throw new ServiceError("Invalid data data", HttpStatus.BAD_REQUEST);
@@ -76,11 +75,11 @@ public class DataService {
         if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
             throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
 
-        return mapper.mapTo(taskRepository.update(UUID.fromString(id), task));
+        return mapper.mapTo(taskRepository.update(id, task));
     }
 
     public void deleteTaskById(UserDto userDto, String id) {
-        var task = taskRepository.query(UUID.fromString(id));
+        var task = taskRepository.query(id);
 
         if(isNull(task))
             throw new ServiceError("Task not found", HttpStatus.NOT_FOUND);
@@ -88,6 +87,6 @@ public class DataService {
         if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
             throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
 
-        taskRepository.delete(UUID.fromString(id));
+        taskRepository.delete(id);
     }
 }

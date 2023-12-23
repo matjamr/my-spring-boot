@@ -33,7 +33,6 @@ public class UserService {
         }
 
         userRepository.save(UserEntity.builder()
-                        .id(UUID.randomUUID().toString())
                         .username(user.getUsername())
                         .password(user.getPassword())
                 .build());
@@ -49,7 +48,7 @@ public class UserService {
                 .build());
 
         System.out.println("Veryfiing user: " + createUser(userDto));
-        System.out.println(userRepository.db);
+//        System.out.println(userRepository.db);
 
         return Optional.ofNullable(userRepository.query(userDto.getUsername()))
                 .filter(user -> user.getPassword().equals(userDto.getPassword()))

@@ -14,57 +14,39 @@ import static java.util.Objects.nonNull;
 
 @Component
 @efs.task.todoapp.init.annotationExecutors.annotations.Repository
-public class TaskRepository implements Repository<UUID, TaskEntity> {
+public class TaskRepository implements Repository<String, TaskEntity> {
+    private final DbFactory dbFactory;
 
-    private final Map<UUID, TaskEntity> map = new HashMap<>();
-    private final SessionFactory sessionFactory;
-
-    public TaskRepository() {
-        sessionFactory = new Configuration().configure("hibernate.cfg.xml")
-                .buildSessionFactory();
-
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-//        List<Employee> employees = session.createQuery("FROM Employee", Employee.class).getResultList();
-//        for (Employee employee : employees) {
-//            System.out.println("ID: " + employee.getId() + ", Name: " + employee.getName());
-//        }
-
-        List<TaskEntity> taskEntities = session.createQuery("FROM TaskEntity ", TaskEntity.class).getResultList();
-
-        transaction.commit();
-        session.close();
-//        sessionFactory.close();
-    }
-
-
-
-    @Override
-    public UUID save(TaskEntity taskEntity) {
-        return Optional.ofNullable(map.put(taskEntity.getId(), taskEntity))
-                .map(TaskEntity::getId)
-                .orElse(taskEntity.getId());
+    public TaskRepository(DbFactory dbFactory) {
+        this.dbFactory = dbFactory;
     }
 
     @Override
-    public TaskEntity query(UUID uuid) {
-        return map.get(uuid);
+    public String save(TaskEntity taskEntity) {
+        return (String) dbFactory.save(taskEntity);
+    }
+
+    @Override
+    public TaskEntity query(String id) {
+        return dbFactory.findById(id, TaskEntity.class);
     }
 
     @Override
     public List<TaskEntity> query(Predicate<TaskEntity> condition) {
-        return map.values().stream()
+        return dbFactory.createQuery("SELECT a FROM task_entity a", TaskEntity.class)
+                .stream()
                 .filter(condition)
                 .toList();
     }
 
     @Override
-    public TaskEntity update(UUID uuid, TaskEntity taskEntity) {
-        return map.replace(uuid, taskEntity);
+    public TaskEntity update(String uuid, TaskEntity taskEntity) {
+        return dbFactory.update(uuid, taskEntity, TaskEntity.class);
     }
 
     @Override
-    public boolean delete(UUID uuid) {
-        return nonNull(map.remove(uuid));
+    public boolean delete(String id) {
+        dbFactory.delete(id, TaskEntity.class);
+        return true;
     }
 }

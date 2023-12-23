@@ -1,6 +1,7 @@
 package efs.task.todoapp.repository;
 
 import efs.task.todoapp.init.annotationExecutors.annotations.Component;
+import efs.task.todoapp.model.entity.TaskEntity;
 import efs.task.todoapp.model.entity.UserEntity;
 
 import java.util.HashMap;
@@ -13,34 +14,40 @@ import static java.util.Objects.isNull;
 @Component
 @efs.task.todoapp.init.annotationExecutors.annotations.Repository
 public class UserRepository implements Repository<String, UserEntity> {
+    private final DbFactory dbFactory;
 
-    public final Map<String, UserEntity> db = new HashMap<>();
+    public UserRepository(DbFactory dbFactory) {
+        this.dbFactory = dbFactory;
+    }
 
     @Override
     public String save(UserEntity userEntity) {
-        db.put(userEntity.getUsername(), userEntity);
+        var ret = dbFactory.save(userEntity);
+
         return userEntity.getUsername();
     }
 
     @Override
-    public UserEntity query(String s) {
-        return db.get(s);
+    public UserEntity query(String id) {
+        return dbFactory.findById(id, UserEntity.class);
     }
 
     @Override
     public List<UserEntity> query(Predicate<UserEntity> condition) {
-        return db.values().stream()
+        var res = dbFactory.createQuery("SELECT a FROM user_entity a", UserEntity.class);
+
+        return res.stream()
                 .filter(condition)
                 .toList();
     }
 
     @Override
-    public UserEntity update(String s, UserEntity userEntity) {
-        return db.replace(s, userEntity);
+    public UserEntity update(String id, UserEntity userEntity) {
+        return dbFactory.update(id, userEntity, UserEntity.class);
     }
 
     @Override
-    public boolean delete(String s) {
-        return isNull(db.remove(s));
+    public boolean delete(String id) {
+        return dbFactory.delete(id, UserEntity.class);
     }
 }

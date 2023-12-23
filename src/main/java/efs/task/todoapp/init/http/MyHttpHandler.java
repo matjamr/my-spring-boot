@@ -88,6 +88,8 @@ public class MyHttpHandler implements HttpHandler {
             if(e instanceof InvocationTargetException eb) {
                 if(eb.getTargetException() instanceof HttpStatusError httpErr) {
                     handleResponse(httpExchange,  "", httpErr.getHttpStatus().getStatusCode());
+                } else {
+                    handleResponse(httpExchange, "", HttpStatus.INTERNAL_ERROR.getStatusCode());
                 }
             } else {
                 handleResponse(httpExchange, "", HttpStatus.INTERNAL_ERROR.getStatusCode());
