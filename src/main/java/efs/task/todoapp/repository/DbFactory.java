@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Component
 public class DbFactory {
@@ -53,18 +54,18 @@ public class DbFactory {
         return returnedObject;
     }
 
-    public <T> T update(String id, T entity, Class<T> clazz) {
+    public <T> T update(String id, Consumer<T> entityConsumer, Class<T> clazz) {
         Transaction transaction = session.beginTransaction();
 
         T returnedObject = session.get(clazz, id);
 
-        returnedObject = entity;
+        entityConsumer.accept(returnedObject);
 
         session.save(returnedObject);
 
         transaction.commit();
 
-        return entity;
+        return returnedObject;
     }
 
     public <T> boolean delete(String id, Class<T> clazz) {

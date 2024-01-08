@@ -43,7 +43,10 @@ public class UserRepository implements Repository<String, UserEntity> {
 
     @Override
     public UserEntity update(String id, UserEntity userEntity) {
-        return dbFactory.update(id, userEntity, UserEntity.class);
+        return dbFactory.update(id, (entity) -> {
+            entity.setUsername(userEntity.getUsername());
+            entity.setPassword(userEntity.getPassword());
+        }, UserEntity.class);
     }
 
     @Override

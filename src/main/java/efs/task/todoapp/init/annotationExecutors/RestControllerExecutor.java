@@ -1,11 +1,7 @@
 package efs.task.todoapp.init.annotationExecutors;
 
-import efs.task.todoapp.init.annotationExecutors.annotations.GetMapping;
-import efs.task.todoapp.init.annotationExecutors.annotations.PostMapping;
-import efs.task.todoapp.init.annotationExecutors.annotations.RestController;
-import efs.task.todoapp.init.annotationExecutors.mappingExecutors.GetMappingExecutor;
-import efs.task.todoapp.init.annotationExecutors.mappingExecutors.MappingExecutor;
-import efs.task.todoapp.init.annotationExecutors.mappingExecutors.PostMappingExecutor;
+import efs.task.todoapp.init.annotationExecutors.annotations.*;
+import efs.task.todoapp.init.annotationExecutors.mappingExecutors.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,12 +15,16 @@ public class RestControllerExecutor implements Executor {
 
     private static final List<Class<? extends Annotation>> supportedAnnotations = List.of(
             GetMapping.class,
-            PostMapping.class
+            PostMapping.class,
+            PutMapping.class,
+            DeleteMapping.class
     );
 
     private static final Map<Class<? extends Annotation>, MappingExecutor> processingMap = Map.of(
             GetMapping.class, new GetMappingExecutor(),
-            PostMapping.class, new PostMappingExecutor()
+            PostMapping.class, new PostMappingExecutor(),
+            PutMapping.class, new PutMappingExecutor(),
+            DeleteMapping.class, new DeleteMappingExecutor()
     );
 
     @Override

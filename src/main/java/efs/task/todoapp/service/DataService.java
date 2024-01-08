@@ -75,7 +75,10 @@ public class DataService {
         if(!Objects.equals(task.getCreatedBy(), userDto.getUsername()))
             throw new ServiceError("Not your task", HttpStatus.FORBIDDEN);
 
-        return mapper.mapTo(taskRepository.update(id, task));
+        var taskUpdate = TaskEntity.builder().id(task.getId()).due(dataDto.getDue()).description(dataDto.getDescription()).build();
+
+        taskRepository.update(id, taskUpdate);
+        return mapper.mapTo(taskUpdate);
     }
 
     public void deleteTaskById(UserDto userDto, String id) {

@@ -41,7 +41,10 @@ public class TaskRepository implements Repository<String, TaskEntity> {
 
     @Override
     public TaskEntity update(String uuid, TaskEntity taskEntity) {
-        return dbFactory.update(uuid, taskEntity, TaskEntity.class);
+        return dbFactory.update(uuid, (task) -> {
+            task.setDue(taskEntity.getDue());
+            task.setDescription(taskEntity.getDescription());
+        }, TaskEntity.class);
     }
 
     @Override

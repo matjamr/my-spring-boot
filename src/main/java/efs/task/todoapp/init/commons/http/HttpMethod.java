@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum HttpMethod {
-    POST("POST"), GET("GET");
+    POST("POST"), GET("GET"), PUT("PUT"), DELETE("DELETE");
 
     private final String method;
 }
